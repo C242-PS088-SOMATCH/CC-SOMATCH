@@ -19,15 +19,20 @@ const uploadImage = async (req, res) => {
       },
     });
 
+    // Menangani error dalam blob stream
     blobStream.on("error", (err) => {
-      return res.status(500).json({ message: "Error uploading file", error: err });
+      console.error("Blob stream error:", err); // Menambahkan log error untuk debugging
+      return res.status(500).json({
+        message: "Error uploading file",
+        error: err, // Kirimkan error yang lebih lengkap
+      });
     });
 
+    // Menangani kesuksesan upload
     blobStream.on("finish", async () => {
       // Mendapatkan URL gambar setelah berhasil diupload
       const imageUrl = `https://storage.cloud.google.com/${bucket.name}/myCatalog/${blob.name}`;
 
-      // Simpan URL gambar ke database
       try {
         const userId = req.user.id; // Mengambil ID pengguna dari JWT yang didekodekan
         console.log("Saving to database:", { userId, imageUrl });
@@ -38,7 +43,7 @@ const uploadImage = async (req, res) => {
           imageUrl: imageUrl,
         });
       } catch (err) {
-        console.error(err);
+        console.error("Database save error:", err);
         res.status(500).json({ message: "Failed to save image URL in database" });
       }
     });
@@ -60,6 +65,7 @@ const getAllMyCatalog = async (req, res) => {
       data: data,
     });
   } catch (error) {
+    console.error("Error fetching catalog:", error);
     res.status(500).json({
       message: "Server error",
       serverMessage: error,
