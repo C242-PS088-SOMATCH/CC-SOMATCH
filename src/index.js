@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 app.use("/", (req, res) => {
-  res.send.json({
+  res.json({
     status: "SoMatch API is active",
   });
   next();
