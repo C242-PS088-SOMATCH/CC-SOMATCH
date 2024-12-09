@@ -8,7 +8,7 @@ const secretManagerClient = new SecretManagerServiceClient();
 
 async function getGoogleCredentials() {
   try {
-    const secretName = "projects/your-project-id/secrets/my-gcp-credentials/versions/latest"; // Ganti dengan nama secret Anda
+    const secretName = process.env.GOOGLE_APPLICATION_CREDENTIALS; // Ganti dengan nama secret Anda
     const [version] = await secretManagerClient.accessSecretVersion({ name: secretName });
     const credentials = version.payload.data.toString();
 
