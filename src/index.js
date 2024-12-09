@@ -10,13 +10,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
-app.get("/", (req, res) => {
-  res.json({
-    status: "SoMatch API is active",
-  });
-  next();
-});
-
 app.use("/api/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/mycatalog", imageRoute);
