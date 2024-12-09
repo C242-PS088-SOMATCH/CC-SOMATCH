@@ -11,8 +11,10 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 app.use("/", (req, res) => {
-  res.send("SoMatch API is active");
-  next;
+  res.send.json({
+    status: "SoMatch API is active",
+  });
+  next();
 });
 
 app.use("/api/users", userRoutes);
