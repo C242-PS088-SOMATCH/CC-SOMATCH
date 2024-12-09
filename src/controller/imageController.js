@@ -1,47 +1,56 @@
 const path = require("path");
-const bucket = require("../config/googleCloud");
-const image = require("../models/image");
+const initializeStorage = require("../config/googleCloud"); // Mengimpor konfigurasi bucket
+const image = require("../models/image"); // Model untuk mengelola data gambar
 
-const uploadImage = (req, res) => {
+const uploadImage = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
-  const blob = bucket.file(Date.now() + path.extname(req.file.originalname));
-  const blobStream = blob.createWriteStream({
-    resumable: false,
-    metadata: {
-      contentType: req.file.mimetype,
-    },
-  });
+  try {
+    // Inisialisasi bucket dengan memanggil fungsi dari googleCloud.js
+    const bucket = await initializeStorage();
 
-  blobStream.on("error", (err) => {
-    return res.status(500).json({ message: "Error uploading file", error: err });
-  });
+    const blob = bucket.file(Date.now() + path.extname(req.file.originalname)); // Penamaan file
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
 
-  blobStream.on("finish", async () => {
-    // Mendapatkan URL gambar setelah berhasil diupload
-    const imageUrl = `https://storage.cloud.google.com/${bucket.name}/myCatalog/${blob.name}`;
+    blobStream.on("error", (err) => {
+      return res.status(500).json({ message: "Error uploading file", error: err });
+    });
 
-    // Simpan URL ke database MySQL
-    try {
-      const userId = req.user.id; // Mengambil ID pengguna dari JWT yang didekodekan
-      console.log("Saving to database:", { userId, imageUrl }); // Tambahkan log
-      await image.myCatalog(userId, imageUrl);
+    blobStream.on("finish", async () => {
+      // Mendapatkan URL gambar setelah berhasil diupload
+      const imageUrl = `https://storage.cloud.google.com/${bucket.name}/myCatalog/${blob.name}`;
 
-      res.status(200).json({
-        message: "Image uploaded successfully",
-        imageUrl: imageUrl,
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Failed to save image URL in database" });
-    }
-  });
+      // Simpan URL gambar ke database
+      try {
+        const userId = req.user.id; // Mengambil ID pengguna dari JWT yang didekodekan
+        console.log("Saving to database:", { userId, imageUrl });
+        await image.myCatalog(userId, imageUrl); // Simpan URL ke database
 
-  blobStream.end(req.file.buffer);
+        res.status(200).json({
+          message: "Image uploaded successfully",
+          imageUrl: imageUrl,
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to save image URL in database" });
+      }
+    });
+
+    blobStream.end(req.file.buffer); // Mengakhiri upload file
+  } catch (error) {
+    console.error("Error during image upload:", error);
+    res.status(500).json({ message: "Error during image upload" });
+  }
 };
 
+// Fungsi untuk mendapatkan semua katalog gambar pengguna
 const getAllMyCatalog = async (req, res) => {
   const userId = req.user.id;
   try {

@@ -6,9 +6,10 @@ const path = require("path");
 // Membuat klien untuk Secret Manager
 const secretManagerClient = new SecretManagerServiceClient();
 
+// Fungsi untuk mengambil kredensial dari Secret Manager
 async function getGoogleCredentials() {
   try {
-    const secretName = process.env.GOOGLE_APPLICATION_CREDENTIALS; // Ganti dengan nama secret Anda
+    const secretName = process.env.GOOGLE_APPLICATION_CREDENTIALS; // Nama secret di Secret Manager
     const [version] = await secretManagerClient.accessSecretVersion({ name: secretName });
     const credentials = version.payload.data.toString();
 
@@ -23,6 +24,7 @@ async function getGoogleCredentials() {
   }
 }
 
+// Inisialisasi Google Cloud Storage dan kembalikan bucket
 async function initializeStorage() {
   try {
     const credentialsPath = await getGoogleCredentials(); // Mendapatkan kredensial dari Secret Manager
@@ -42,12 +44,5 @@ async function initializeStorage() {
   }
 }
 
-// Memanggil fungsi untuk menginisialisasi Storage dan mengeksposnya
-initializeStorage()
-  .then((bucket) => {
-    console.log("Storage initialized successfully");
-    module.exports = bucket; // Mengekspor bucket yang sudah diinisialisasi
-  })
-  .catch((err) => {
-    console.error("Error initializing storage:", err);
-  });
+// Ekspor fungsi inisialisasi bucket untuk digunakan di controller lain
+module.exports = initializeStorage;
