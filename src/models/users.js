@@ -6,6 +6,18 @@ const getAllUsers = () => {
   return dbPool.execute(SQLQuery);
 };
 
+const registerUser = (body, hashedPassword) => {
+  const SQLQuery = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+
+  return dbPool.execute(SQLQuery, [body.name, body.email, hashedPassword]);
+};
+
+const loginUser = (body) => {
+  const SQLQuery = `SELECT * FROM users WHERE email = ?`;
+
+  return dbPool.execute(SQLQuery, [body.email]);
+};
+
 const findByEmail = (body) => {
   const SQLQuery = `'SELECT * FROM users WHERE email = ?'`;
 
@@ -38,4 +50,6 @@ module.exports = {
   updateUser,
   deleteUser,
   findByEmail,
+  registerUser,
+  loginUser,
 };
