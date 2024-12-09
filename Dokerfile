@@ -1,11 +1,8 @@
-# Build dependencies
-FROM node:17-alpine as dependencies
+FROM node:18.17.1
 WORKDIR /app
-COPY package.json .
-RUN npm i
-COPY . . 
-# Build production image
-FROM dependencies as builder
-RUN npm run build
+ENV PORT 8080
+ENV MODEL_URL 'https://console.cloud.google.com/storage/browser/somatch'
+COPY . .
+RUN npm install
 EXPOSE 8000
-CMD npm run start
+CMD [ "npm", "run", "start"]
