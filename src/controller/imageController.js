@@ -21,7 +21,7 @@ const uploadImage = (req, res) => {
 
   blobStream.on("finish", async () => {
     // Mendapatkan URL gambar setelah berhasil diupload
-    const imageUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
+    const imageUrl = `https://storage.cloud.google.com/${bucket.name}/myCatalog/${blob.name}`;
 
     // Simpan URL ke database MySQL
     try {
