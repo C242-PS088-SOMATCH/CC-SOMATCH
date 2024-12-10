@@ -1,40 +1,41 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const auth = require("../models/users");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const db = require("./database");
 
-const registerUser = async (req, res) => {
-  const { body } = req;
-  try {
-    const hashedPassword = await bcrypt.hash(body.password, 10);
-    const [result] = await auth.registerUser(body, hashedPassword);
-    res.status(201).json({ message: "User registered successfully", userId: result.insertId });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+// Serialize user
+passport.serializeUser((user, done) => done(null, user.id));
 
-const loginUser = async (req, res) => {
-  const { body } = req; // identifier bisa email atau username
-  try {
-    const [rows] = await auth.loginUser(body);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "User not found or has been deleted" });
+passport.deserializeUser((id, done) => {
+  db.query("SELECT * FROM users WHERE id = ?", [id])
+    .then(([rows]) => done(null, rows[0]))
+    .catch((err) => done(err, null));
+});
+
+// Google OAuth2 Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URI,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const [rows] = await db.query("SELECT * FROM users WHERE google_id = ?", [profile.id]);
+        if (rows.length) {
+          return done(null, rows[0]); // User already exists
+        }
+
+        // Create new user
+        const [result] = await db.query("INSERT INTO users (name, username, email, google_id) VALUES (?, ?, ?, ?)", [profile.displayName, profile.displayName, profile.emails[0].value, profile.id]);
+
+        const [newUser] = await db.query("SELECT * FROM users WHERE id = ?", [result.insertId]);
+        done(null, newUser);
+      } catch (error) {
+        done(error, null);
+      }
     }
+  )
+);
 
-    const user = rows[0];
-    const match = await bcrypt.compare(body.password, user.password);
-    if (!match) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ message: "Login successful", token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-module.exports = {
-  loginUser,
-  registerUser,
-};
+module.exports = passport;

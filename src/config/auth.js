@@ -4,6 +4,7 @@ const db = require("./database");
 
 // Serialize user
 passport.serializeUser((user, done) => done(null, user.id));
+
 passport.deserializeUser((id, done) => {
   db.query("SELECT * FROM users WHERE id = ?", [id])
     .then(([rows]) => done(null, rows[0]))
@@ -26,9 +27,10 @@ passport.use(
         }
 
         // Create new user
-        const [result] = await db.query("INSERT INTO users (name, email, google_id) VALUES (?, ?, ?)", [profile.displayName, profile.emails[0].value, profile.id]);
+        const [result] = await db.query("INSERT INTO users (name, username, email, google_id) VALUES (?, ?, ?, ?)", [profile.displayName, profile.displayName, profile.emails[0].value, profile.id]);
+
         const [newUser] = await db.query("SELECT * FROM users WHERE id = ?", [result.insertId]);
-        done(null, newUser[0]);
+        done(null, newUser);
       } catch (error) {
         done(error, null);
       }
