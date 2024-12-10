@@ -1,21 +1,26 @@
 const dbPool = require("../config/database.js");
 
 const getAllUsers = () => {
-  const SQLQuery = "SELECT * FROM users";
+  const SQLQuery = "SELECT * FROM users WHERE delete_at = 0";
 
   return dbPool.execute(SQLQuery);
 };
 
-const registerUser = (body, hashedPassword) => {
-  const SQLQuery = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+const getUser = (userId) => {
+  const SQLQuery = `SELECT * FROM users WHERE id=?`;
 
-  return dbPool.execute(SQLQuery, [body.name, body.email, hashedPassword]);
+  return dbPool.execute(SQLQuery, [userId]);
+};
+
+const registerUser = (body, hashedPassword) => {
+  const SQLQuery = `INSERT INTO users (name, email, username, password) VALUES (?, ?, ?, ?)`;
+
+  return dbPool.execute(SQLQuery, [body.name, body.email, body.username, hashedPassword]);
 };
 
 const loginUser = (body) => {
-  const SQLQuery = `SELECT * FROM users WHERE email = ?`;
-
-  return dbPool.execute(SQLQuery, [body.email]);
+  const SQLQuery = `SELECT * FROM users WHERE (email = ? OR username = ?) AND delete_at = 0`;
+  return dbPool.execute(SQLQuery, [body.email, body.email]);
 };
 
 const findByEmail = (body) => {
@@ -26,24 +31,30 @@ const findByEmail = (body) => {
 };
 
 const createNewUser = (body) => {
-  const SQLQuery = `INSERT INTO users (name, email, address) VALUES (?, ?, ?)`;
+  const SQLQuery = `INSERT INTO users (name, email, username, address) VALUES (?, ?, ?, ?)`;
 
   // Use parameterized query to prevent SQL injection
-  return dbPool.execute(SQLQuery, [body.name, body.email, body.address]);
+  return dbPool.execute(SQLQuery, [body.name, body.email, body.username, body.address]);
 };
 
-const updateUser = (body, idUser) => {
+const updateUser = (body, idUser, hashedPassword) => {
   const SQLQuery = `UPDATE users 
-                    SET name='${body.name}', email='${body.email}', address='${body.address}' 
+                    SET name='${body.name}', email='${body.email}', username='${body.username}', password='${hashedPassword}' 
                     WHERE id=${idUser}`;
   return dbPool.execute(SQLQuery);
 };
 
-const deleteUser = (idUsers) => {
-  const SQLQuery = `DELETE FROM users WHERE id=${idUsers}`;
+// const deleteUser = (idUsers) => {
+//   const SQLQuery = `DELETE FROM users WHERE id=${idUsers}`;
 
-  return dbPool.execute(SQLQuery);
+//   return dbPool.execute(SQLQuery);
+// };
+
+const deleteUser = (idUser) => {
+  const SQLQuery = `UPDATE users SET delete_at = 1 WHERE id = ?`;
+  return dbPool.execute(SQLQuery, [idUser]);
 };
+
 module.exports = {
   getAllUsers,
   createNewUser,
@@ -52,4 +63,5 @@ module.exports = {
   findByEmail,
   registerUser,
   loginUser,
+  getUser,
 };

@@ -14,11 +14,11 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { body } = req;
+  const { body } = req; // identifier bisa email atau username
   try {
     const [rows] = await auth.loginUser(body);
     if (rows.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found or has been deleted" });
     }
 
     const user = rows[0];
