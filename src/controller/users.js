@@ -1,8 +1,25 @@
+const bcrypt = require("bcrypt");
 const UserModel = require("../models/users.js");
 
 const getAllUsers = async (req, res) => {
   try {
     const [data] = await UserModel.getAllUsers();
+    res.json({
+      message: "GET all users success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      serverMessage: error,
+    });
+  }
+};
+
+const getUser = async (req, res) => {
+  const { userId } = req.user.id;
+  try {
+    const [data] = await UserModel.getUser(userId);
     res.json({
       message: "GET all users success",
       data: data,
@@ -33,10 +50,11 @@ const createNewUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { idUser } = req.params;
+  const idUser = req.user.id;
   const { body } = req;
   try {
-    await UserModel.updateUser(body, idUser);
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    await UserModel.updateUser(body, idUser, hashedPassword);
     res.status(201).json({
       message: "UPDATE user success",
       data: {
@@ -54,7 +72,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { idUser } = req.params;
+  const idUser = req.user.id;
   try {
     await UserModel.deleteUser(idUser);
     res.json({
@@ -75,4 +93,5 @@ module.exports = {
   createNewUser,
   updateUser,
   deleteUser,
+  getUser,
 };
