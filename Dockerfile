@@ -11,12 +11,12 @@ RUN npm install
 # Menyalin seluruh file aplikasi
 COPY . .
 
-# Mengekspos port yang akan digunakan oleh aplikasi (port default Cloud Run adalah 8080)
+# Mengekspos port yang akan digunakan oleh aplikasi
 EXPOSE 8080
 
 # Menetapkan variabel lingkungan
-ENV NODE_ENV production
-ENV PORT 8080
+ENV NODE_ENV=production
+ENV PORT=8080
 
 # Perintah untuk menjalankan aplikasi
-CMD ["node", "app.js"]
+CMD ["node", "src/index.js"]

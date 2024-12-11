@@ -6,10 +6,19 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const imageRoute = require("./routes/imageRoutes");
 const imagePrediction = require("./routes/predictionRoute");
+const session = require("express-session");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(passport.initialize());
+app.use(
+  session({
+    secret: process.env.SESION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 
 app.use("/api/users", userRoutes);
 app.use("/auth", authRoutes);
