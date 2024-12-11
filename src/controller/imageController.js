@@ -40,6 +40,9 @@ const uploadImage = (req, res) => {
   });
 
   blobStream.end(req.file.buffer);
+  console.log("File received:", req.file);
+  console.log("File buffer length:", req.file.buffer.length);
+  console.log("Generated blob name:", blob.name);
 };
 
 const getAllMyCatalog = async (req, res) => {

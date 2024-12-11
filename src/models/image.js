@@ -12,7 +12,20 @@ const getAllMyCatalog = (userId) => {
   return dbPool.execute(SQLQuery, [userId]);
 };
 
+const getImageRecomendation = (accessories, bottomwear, footwear, onePiece, upperware) => {
+  const SQLQuery = `SELECT id, image_url FROM myCatalog WHERE id IN (?, ?, ?, ?, ?)`;
+
+  return dbPool.execute(SQLQuery, [accessories, bottomwear, footwear, onePiece, upperware]);
+};
+
+const getImagePrediction = (bottomwearupperware) => {
+  const SQLQuery = `SELECT id, image_url FROM myCatalog WHERE id IN (?, ?)`;
+
+  return dbPool.execute(SQLQuery, [bottomwear, upperware]);
+};
 module.exports = {
   myCatalog,
   getAllMyCatalog,
+  getImageRecomendation,
+  getImagePrediction,
 };
