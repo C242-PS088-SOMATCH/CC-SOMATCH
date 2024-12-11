@@ -7,6 +7,7 @@ const getAllUsers = () => {
 };
 
 const getUser = (userId) => {
+  console.log(userId);
   const SQLQuery = `SELECT * FROM users WHERE id=?`;
 
   return dbPool.execute(SQLQuery, [userId]);
@@ -37,9 +38,9 @@ const createNewUser = (body) => {
   return dbPool.execute(SQLQuery, [body.name, body.email, body.username, body.address]);
 };
 
-const updateUser = (body, idUser, hashedPassword) => {
+const updateUser = (body, idUser) => {
   const SQLQuery = `UPDATE users 
-                    SET name='${body.name}', email='${body.email}', username='${body.username}', password='${hashedPassword}' 
+                    SET name='${body.name}', email='${body.email}', username='${body.username}' 
                     WHERE id=${idUser}`;
   return dbPool.execute(SQLQuery);
 };
