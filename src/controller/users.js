@@ -17,7 +17,7 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { userId } = req.user.id;
+  const userId = req.user.id;
   try {
     const [data] = await UserModel.getUser(userId);
     res.json({
