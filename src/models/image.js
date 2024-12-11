@@ -1,9 +1,9 @@
 const dbPool = require("../config/database.js");
 
-const myCatalog = (userId, imageUrl) => {
-  const SQLQuery = `INSERT INTO mycatalog (user_id, image_url) VALUES (?, ?)`;
+const myCatalog = (userId, imageUrl, type) => {
+  const SQLQuery = `INSERT INTO mycatalog (user_id, image_url, type) VALUES (?, ?, ?)`;
 
-  return dbPool.execute(SQLQuery, [userId, imageUrl]);
+  return dbPool.execute(SQLQuery, [userId, imageUrl, type]);
 };
 
 const getAllMyCatalog = (userId) => {

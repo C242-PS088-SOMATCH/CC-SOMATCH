@@ -7,6 +7,12 @@ const uploadImage = (req, res) => {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
+  const { type } = req.body; // Mengambil type dari body request
+
+  if (!type) {
+    return res.status(400).json({ message: "Type is required" });
+  }
+
   const blob = bucket.file(Date.now() + path.extname(req.file.originalname));
   const blobStream = blob.createWriteStream({
     resumable: false,
@@ -23,19 +29,21 @@ const uploadImage = (req, res) => {
     // Mendapatkan URL gambar setelah berhasil diupload
     const imageUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
 
-    // Simpan URL ke database MySQL
     try {
       const userId = req.user.id; // Mengambil ID pengguna dari JWT yang didekodekan
-      console.log("Saving to database:", { userId, imageUrl }); // Tambahkan log
-      await image.myCatalog(userId, imageUrl);
+
+      // Simpan data gambar ke database
+      const [result] = await image.myCatalog(userId, imageUrl, type);
 
       res.status(200).json({
         message: "Image uploaded successfully",
+        imageId: result.insertId, // ID gambar dari hasil insert
         imageUrl: imageUrl,
+        type: type,
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Failed to save image URL in database" });
+      res.status(500).json({ message: "Failed to save image in database" });
     }
   });
 
@@ -47,7 +55,7 @@ const getAllMyCatalog = async (req, res) => {
   try {
     const [data] = await image.getAllMyCatalog(userId);
     res.json({
-      message: "GET all users success",
+      message: "GET all images success",
       data: data,
     });
   } catch (error) {
