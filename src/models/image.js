@@ -14,7 +14,7 @@ const getAllMyCatalog = (userId) => {
 
 // Fungsi untuk mengambil URL gambar berdasarkan id katalog
 const getImagePrediction = async (upperware, bottomware) => {
-  const SQLQuery = `SELECT id, image_url FROM myCatalog WHERE id IN (?, ?)`;
+  const SQLQuery = `SELECT id, image_url FROM mycatalog WHERE id IN (?, ?)`;
   const [rows] = await dbPool.execute(SQLQuery, [upperware, bottomware]);
   return rows;
 };
