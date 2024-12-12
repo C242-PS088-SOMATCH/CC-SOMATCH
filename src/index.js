@@ -6,6 +6,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const imageRoute = require("./routes/imageRoutes");
 const predictionRoute = require("./routes/predictionRoutes");
+const tensorflow = require("@tensorflow/tfjs-node");
 
 const app = express();
 app.use(bodyParser.json());
