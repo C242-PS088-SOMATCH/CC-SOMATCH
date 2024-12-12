@@ -27,7 +27,7 @@ const uploadImage = (req, res) => {
 
   blobStream.on("finish", async () => {
     // Mendapatkan URL gambar setelah berhasil diupload
-    const imageUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
+    const imageUrl = `https://storage.googleapis.com/${bucket.name}/${body.type}/${blob.name}`;
 
     try {
       const userId = req.user.id; // Mengambil ID pengguna dari JWT yang didekodekan

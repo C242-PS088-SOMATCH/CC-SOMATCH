@@ -4,7 +4,7 @@ const tf = require("@tensorflow/tfjs-node");
 let model1;
 
 async function loadModel1() {
-  model1 = await tf.loadLayersModel("../tfjs_model/model.json");
+  model1 = await tf.loadLayersModel(process.env.PREDIC_MODEL);
   console.log("Model berhasil dimuat!");
 }
 
