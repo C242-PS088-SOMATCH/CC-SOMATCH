@@ -1,5 +1,5 @@
 const { getImagePrediction } = require("../models/image");
-const { getModel1 } = require("../config/tensorFlow");
+const { loadPredictionModel } = require("../config/tensorFlow");
 const axios = require("axios");
 const tf = require("@tensorflow/tfjs-node");
 
@@ -36,8 +36,8 @@ async function predict(req, res) {
     const upperTensor = await processImageFromUrl(upperImageUrl);
     const bottomTensor = await processImageFromUrl(bottomImageUrl);
 
-    // Prediksi
-    const model = getModel1();
+    // Muat model prediksi
+    const model = await loadPredictionModel();
     const inputTensor = { image1_input: upperTensor, image2_input: bottomTensor };
     const predictions = model.predict(inputTensor);
     const result = predictions.dataSync()[0];

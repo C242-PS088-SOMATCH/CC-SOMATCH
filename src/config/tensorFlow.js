@@ -1,18 +1,25 @@
 const tf = require("@tensorflow/tfjs-node");
 
-// Memuat model prediction TensorFlow.js
-let model1;
+// Path ke model untuk fitur 1
+const predictionModelPath = "/usr/src/app/src/predicModel/model.json";
 
-async function loadModel1() {
-  model1 = await tf.loadLayersModel(process.env.PREDIC_MODEL);
-  console.log("Model berhasil dimuat!");
-}
+// Path ke model untuk fitur 2
+const recommendationModelPath = "/usr/src/app/src/recomendationModel/model.json";
 
-function getModel1() {
-  if (!model1) {
-    throw new Error("Model belum dimuat");
-  }
-  return model1;
-}
+// Memuat model untuk fitur 1
+const loadPredictionModel = async () => {
+  const model = await tf.loadGraphModel(`file://${predictionModelPath}`);
+  console.log("Prediction model loaded");
+  return model;
+};
 
-module.exports = { loadModel1, getModel1 };
+// Memuat model untuk fitur 2
+const loadRecommendationModel = async () => {
+  const model = await tf.loadGraphModel(`file://${recommendationModelPath}`);
+  console.log("Recommendation model loaded");
+  return model;
+};
+
+// Gunakan fungsi loadModel untuk memuat model sesuai kebutuhan fitur
+loadPredictionModel();
+loadRecommendationModel();
