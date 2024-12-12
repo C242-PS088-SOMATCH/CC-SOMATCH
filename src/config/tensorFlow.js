@@ -21,5 +21,4 @@ const loadRecommendationModel = async () => {
 };
 
 // Gunakan fungsi loadModel untuk memuat model sesuai kebutuhan fitur
-loadPredictionModel();
-loadRecommendationModel();
+module.exports = { loadPredictionModel, loadRecommendationModel };
