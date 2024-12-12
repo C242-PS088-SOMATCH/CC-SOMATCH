@@ -1,4 +1,5 @@
 const tf = require("@tensorflow/tfjs-node");
+const fs = require("fs");
 
 // Path ke model untuk fitur 1
 const predictionModelPath = "/usr/src/app/src/predicModel/model.json";
@@ -9,6 +10,9 @@ const recommendationModelPath = "/usr/src/app/src/recomendationModel/model.json"
 // Memuat model untuk fitur 1
 const loadPredictionModel = async () => {
   const model = await tf.loadGraphModel(`file://${predictionModelPath}`);
+  if (!fs.existsSync(predictionModelPath)) {
+    console.log("Model file not found:", predictionModelPath);
+  }
   console.log("Prediction model loaded");
   return model;
 };
