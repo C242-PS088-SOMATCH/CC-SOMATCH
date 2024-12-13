@@ -15,7 +15,7 @@ const getAllMyCatalog = (userId) => {
 const getRandMyCatalog = () => {
   const SQLQuery = `SELECT * FROM mycatalog ORDER BY RAND() LIMIT 6`;
 
-  return dbPool.execute(SQLQuery, [userId]);
+  return dbPool.execute(SQLQuery);
 };
 
 // Fungsi untuk mengambil URL gambar berdasarkan id katalog
