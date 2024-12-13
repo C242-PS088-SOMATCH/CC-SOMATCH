@@ -67,8 +67,9 @@ const getAllMyCatalog = async (req, res) => {
 };
 
 const getRandMyCatalog = async (req, res) => {
+  const userId = req.user.id;
   try {
-    const [data] = await image.getRandMyCatalog();
+    const [data] = await image.getRandMyCatalog(userId);
     res.json({
       message: "GET all images success",
       data: data,

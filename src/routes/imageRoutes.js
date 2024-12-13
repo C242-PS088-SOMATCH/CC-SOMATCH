@@ -12,6 +12,6 @@ const router = express.Router();
 
 router.post("/upload", verifyToken, upload.single("image"), imageController.uploadImage);
 router.get("/", verifyToken, imageController.getAllMyCatalog);
-router.get("/rand", imageController.getRandMyCatalog);
+router.get("/rand", verifyToken, imageController.getRandMyCatalog);
 
 module.exports = router;
