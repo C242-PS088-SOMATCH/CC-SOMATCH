@@ -19,8 +19,22 @@ const getImagePrediction = async (upperware, bottomware) => {
   return rows;
 };
 
+const getImageRecomendation = async (id) => {
+  const SQLQuery = `SELECT * FROM mycatalog WHERE id=?`;
+  const [rows] = await dbPool.execute(SQLQuery, [id]);
+  return rows;
+};
+
+const updateMyCatalog = (id, style, color_group, dominant_color, name) => {
+  const SQLQuery = `UPDATE mycatalog SET style='${style}', color_group='${color_group}', dominant_color='${dominant_color}', name='${name} WHERE id='${id}''`;
+
+  return dbPool.execute(SQLQuery);
+};
+
 module.exports = {
   myCatalog,
   getAllMyCatalog,
   getImagePrediction,
+  getImageRecomendation,
+  updateMyCatalog,
 };

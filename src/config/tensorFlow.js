@@ -9,7 +9,7 @@ const recommendationModelPath = "/usr/src/app/src/recomendationModel/model.json"
 
 // Memuat model untuk fitur 1
 const loadPredictionModel = async () => {
-  const model = await tf.loadGraphModel(`file://${predictionModelPath}`);
+  const model = await tf.loadLayersModel(`https://storage.googleapis.com/somatch/model/Prediksi/model.json`);
   if (!fs.existsSync(predictionModelPath)) {
     console.log("Model file not found:", predictionModelPath);
   }
@@ -19,8 +19,11 @@ const loadPredictionModel = async () => {
 
 // Memuat model untuk fitur 2
 const loadRecommendationModel = async () => {
-  const model = await tf.loadGraphModel(`file://${recommendationModelPath}`);
-  console.log("Recommendation model loaded");
+  const model = await tf.loadLayersModel(`https://storage.googleapis.com/somatch/model/style_fixed.h5`);
+  if (!fs.existsSync(predictionModelPath)) {
+    console.log("Model file not found:", predictionModelPath);
+  }
+  console.log("Prediction model loaded");
   return model;
 };
 

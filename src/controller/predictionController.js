@@ -7,7 +7,8 @@ const tf = require("@tensorflow/tfjs-node");
 async function processImageFromUrl(imageUrl) {
   const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
   const imageBuffer = Buffer.from(response.data, "binary");
-  const tensor = tf.node.decodeImage(imageBuffer, 3).resizeBilinear([224, 224]).div(255.0).expandDims();
+  const tensor = tf.image.resizeBilinear(tf.node.decodeImage(imageBuffer, 3), [224, 224]).div(255.0).expandDims();
+  console.log(tensor);
   return tensor;
 }
 
@@ -38,6 +39,7 @@ async function predict(req, res) {
 
     // Muat model prediksi
     const model = await loadPredictionModel();
+    console.log(model);
     const inputTensor = { image1_input: upperTensor, image2_input: bottomTensor };
     const predictions = model.predict(inputTensor);
     const result = predictions.dataSync()[0];
