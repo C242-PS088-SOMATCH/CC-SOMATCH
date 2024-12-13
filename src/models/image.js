@@ -12,8 +12,8 @@ const getAllMyCatalog = (userId) => {
   return dbPool.execute(SQLQuery, [userId]);
 };
 
-const getRandMyCatalog = (userId) => {
-  const SQLQuery = `SELECT * FROM mycatalog WHERE user_id='${userId}' ORDER BY RAND() LIMIT 6 `;
+const getRandMyCatalog = () => {
+  const SQLQuery = `SELECT * FROM mycatalog WHERE user_id='1' ORDER BY RAND() LIMIT 6 `;
 
   return dbPool.execute(SQLQuery);
 };
