@@ -12,6 +12,12 @@ const getAllMyCatalog = (userId) => {
   return dbPool.execute(SQLQuery, [userId]);
 };
 
+const getRandMyCatalog = () => {
+  const SQLQuery = `SELECT * FROM mycatalog ORDER BY RAND() LIMIT 6`;
+
+  return dbPool.execute(SQLQuery, [userId]);
+};
+
 // Fungsi untuk mengambil URL gambar berdasarkan id katalog
 const getImagePrediction = async (upperware, bottomware) => {
   const SQLQuery = `SELECT id, image_url FROM mycatalog WHERE id IN (?, ?)`;
@@ -37,4 +43,5 @@ module.exports = {
   getImagePrediction,
   getImageRecomendation,
   updateMyCatalog,
+  getRandMyCatalog,
 };

@@ -66,7 +66,22 @@ const getAllMyCatalog = async (req, res) => {
   }
 };
 
+const getRandMyCatalog = async (req, res) => {
+  try {
+    const [data] = await image.getRandMyCatalog();
+    res.json({
+      message: "GET all images success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      serverMessage: error,
+    });
+  }
+};
 module.exports = {
   uploadImage,
   getAllMyCatalog,
+  getRandMyCatalog,
 };
