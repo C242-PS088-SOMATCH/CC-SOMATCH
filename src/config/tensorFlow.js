@@ -19,7 +19,7 @@ const loadPredictionModel = async () => {
 
 // Memuat model untuk fitur 2
 const loadRecommendationModel = async () => {
-  const model = await tf.loadLayersModel(`https://storage.googleapis.com/somatch/model/style_fixed.h5`);
+  const model = await tf.loadLayersModel(`https://storage.googleapis.com/somatch/model/Rekomedasi/model.json`);
   if (!fs.existsSync(predictionModelPath)) {
     console.log("Model file not found:", predictionModelPath);
   }
